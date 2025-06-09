@@ -22,8 +22,10 @@ class Post(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     title: Optional[str] = Field(nullable=True)
     description: Optional[str] = Field(nullable=True)
+
     user_id: Optional[int] = Field(
         default=None,
         foreign_key="user.id",
         nullable=True
     )
+    user: Optional[User] = Relationship(back_populates="posts")

@@ -22,9 +22,10 @@ async def create_new_user(
     user: UserCreate,
 ):
     """Создаёт нового пользователя."""
-    existing_user = await session.exec(
+    result = await session.execute(
         select(User).where(User.email == user.email)
-    ).first()
+    )
+    existing_user = result.scalars().first()
     if existing_user:
         raise HTTPException(
             status_code=400,

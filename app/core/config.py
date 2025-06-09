@@ -10,7 +10,7 @@ class Settings(BaseSettings):
         "Тестовое задание на позицию 'Python разработчик' для 'Московского "
         "метрополитена'"
     )
-    database_url: str = "sqlite+aiosqlite:///../test_moscow_metro.db"
+    database_url: str = "sqlite+aiosqlite:///test_moscow_metro.db"
 
 
 settings = Settings()
