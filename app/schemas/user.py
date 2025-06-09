@@ -15,7 +15,7 @@ class UserCreate(SQLModel):
         ..., example="user@example.com", description="Электронная почта"
     )
     photo_url: str | None = Field(
-        None, example="https://example.com/photo.jpg"
+        None, example="http://127.0.0.1:8000/uploads/photo.jpg"
     )
 
 
