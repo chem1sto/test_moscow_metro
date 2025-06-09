@@ -1,12 +1,31 @@
 """Модуль для работы с эндпоинтами постов пользователей."""
 
-from fastapi import APIRouter, HTTPException, status
+from typing import Annotated
+
+from fastapi import APIRouter, HTTPException, Query, status
+from sqlmodel import select
 
 from app.db.models import Post, User
 from app.db.session import SessionDep
 from app.schemas.post import PostCreate, PostRead
 
 post_router = APIRouter()
+
+
+@post_router.get(
+    "/",
+    summary="Получить все посты пользователей",
+    response_model=list[PostRead],
+    response_description="Список всех постов пользователей",
+    status_code=status.HTTP_200_OK,
+)
+async def get_posts(
+    session: SessionDep,
+    offset: int = 0,
+    limit: Annotated[int, Query(le=100)] = 100,
+) -> list[Post]:
+    stmt = await session.execute(select(Post).offset(offset).limit(limit))
+    return stmt.scalars().all()
 
 
 @post_router.post(
