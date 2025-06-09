@@ -5,23 +5,31 @@ from sqlmodel import SQLModel
 
 
 class UserCreate(SQLModel):
-    first_name: str = Field(
-        ..., min_length=1, example="Иван", description="Имя"
+    first_name: str | None = Field(
+        ..., min_length=1, description="Имя", examples=["Иван"]
     )
-    second_name: str = Field(
-        ..., min_length=1, example="Петров", description="Фамилия"
+    second_name: str | None = Field(
+        ..., min_length=1, description="Фамилия", examples=["Иванов"]
     )
-    email: EmailStr = Field(
-        ..., example="user@example.com", description="Электронная почта"
+    patronymic: str | None = Field(
+        ..., min_length=1, description="Отчество", examples=["Иванович"]
+    )
+    email: EmailStr | None = Field(
+        ..., description="Электронная почта", examples=["ivan@example.ru"]
+    )
+    address: str | None = Field(
+        ..., description="Адрес", examples=["ул. Пушкина, д.10"]
     )
     photo_url: str | None = Field(
-        None, example="http://127.0.0.1:8000/uploads/photo.jpg"
+        None, examples=["http://127.0.0.1:8000/uploads/photo.jpg"]
     )
 
 
 class UserRead(SQLModel):
     id: int
-    first_name: str
-    second_name: str
+    first_name: str | None
+    second_name: str | None
+    patronymic: str | None
     email: EmailStr
+    address: str | None
     photo_url: str | None

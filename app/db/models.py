@@ -21,7 +21,7 @@ class Post(SQLModel, table=True):
     """Модель поста."""
     id: Optional[int] = Field(default=None, primary_key=True)
     title: Optional[str] = Field(nullable=True)
-    description: Optional[str] = Field(nullable=True)
+    content: Optional[str] = Field(nullable=True)
     user_id: Optional[int] = Field(
         default=None,
         foreign_key="user.id",

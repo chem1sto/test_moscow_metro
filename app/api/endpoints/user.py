@@ -1,6 +1,8 @@
 """Модуль для работы с эндпоинтами пользователей."""
 
-from fastapi import APIRouter, HTTPException, status
+from typing import Annotated
+
+from fastapi import APIRouter, HTTPException, Query, status
 from sqlmodel import select
 
 from app.db.models import User
@@ -10,6 +12,36 @@ from app.schemas.user import UserCreate, UserRead
 user_router = APIRouter()
 
 
+@user_router.get(
+    "/",
+    summary="Получить всех пользователей",
+    response_model=list[UserRead],
+    response_description="Список всех пользователей",
+    status_code=status.HTTP_200_OK,
+)
+async def get_users(
+    session: SessionDep,
+    offset: int = 0,
+    limit: Annotated[int, Query(le=100)] = 100,
+) -> list[User]:
+    stmt = await session.execute(select(User).offset(offset).limit(limit))
+    return stmt.scalars().all()
+
+
+@user_router.get(
+    "/{user_id}/",
+    summary="Получить пользователя",
+    response_model=UserRead,
+    response_description="Выбранный пользователь",
+    status_code=status.HTTP_200_OK,
+)
+async def get_user(user_id: int, session: SessionDep) -> User:
+    user = await session.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="Пользователь не найден")
+    return user
+
+
 @user_router.post(
     "/",
     response_model=UserRead,
@@ -17,15 +49,15 @@ user_router = APIRouter()
     summary="Создать нового пользователя",
     response_description="Созданный пользователь"
 )
-async def create_new_user(
-    session: SessionDep,
+async def create_user(
     user: UserCreate,
-):
+    session: SessionDep,
+) -> User:
     """Создаёт нового пользователя."""
-    result = await session.execute(
+    stmt = await session.execute(
         select(User).where(User.email == user.email)
     )
-    existing_user = result.scalars().first()
+    existing_user = stmt.scalars().first()
     if existing_user:
         raise HTTPException(
             status_code=400,
@@ -33,7 +65,7 @@ async def create_new_user(
                 "Электронная почта уже используется для другого пользователя"
             )
         )
-    user = User(**user.dict())
+    user = User.model_validate(user)
     session.add(user)
     await session.commit()
     await session.refresh(user)
