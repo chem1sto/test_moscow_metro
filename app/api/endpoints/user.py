@@ -44,26 +44,24 @@ async def get_user(user_id: int, session: SessionDep) -> User:
 
 @user_router.post(
     "/",
-    response_model=UserRead,
-    status_code=status.HTTP_201_CREATED,
     summary="Создать нового пользователя",
-    response_description="Созданный пользователь"
+    response_model=UserRead,
+    response_description="Созданный пользователь",
+    status_code=status.HTTP_201_CREATED,
 )
 async def create_user(
     user: UserCreate,
     session: SessionDep,
 ) -> User:
     """Создаёт нового пользователя."""
-    stmt = await session.execute(
-        select(User).where(User.email == user.email)
-    )
+    stmt = await session.execute(select(User).where(User.email == user.email))
     existing_user = stmt.scalars().first()
     if existing_user:
         raise HTTPException(
-            status_code=400,
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail=(
                 "Электронная почта уже используется для другого пользователя"
-            )
+            ),
         )
     user = User.model_validate(user)
     session.add(user)

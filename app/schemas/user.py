@@ -1,4 +1,4 @@
-"""Модуль для настройки Pydantic-схем для модели User."""
+"""Модуль для настройки Pydantic-схем моделей данных User."""
 
 from pydantic import EmailStr, Field
 from sqlmodel import SQLModel
