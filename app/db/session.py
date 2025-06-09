@@ -1,4 +1,4 @@
-"""Модуль для настройки подключения к БД и создание сессий для работы с ней."""
+"""Модуль для настройки движка и создания сессий для работы с БД."""
 
 from typing import Annotated
 
@@ -8,7 +8,6 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine, async_sessionmaker, AsyncSession
 )
 from sqlalchemy.orm import declarative_base, declared_attr
-from sqlmodel import SQLModel
 
 from app.core.config import settings
 
@@ -25,12 +24,6 @@ Base = declarative_base(cls=PreBase)
 async_engine = create_async_engine(
     settings.database_url, connect_args={"check_same_thread": False}
 )
-
-
-async def create_db_and_tables():
-    """Асинхронное создание всех таблиц в БД."""
-    async with async_engine.begin() as conn:
-        await conn.run_sync(SQLModel.metadata.create_all)
 
 
 async def get_async_session():
