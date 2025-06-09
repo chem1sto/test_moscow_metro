@@ -5,31 +5,87 @@ from sqlmodel import SQLModel
 
 
 class UserCreate(SQLModel):
+    """Схема для создания пользователя."""
+
     first_name: str | None = Field(
-        ..., min_length=1, description="Имя", examples=["Иван"]
+        None, min_length=1, description="Имя", examples=["Иван"]
     )
     second_name: str | None = Field(
-        ..., min_length=1, description="Фамилия", examples=["Иванов"]
+        None, min_length=1, description="Фамилия", examples=["Иванов"]
     )
     patronymic: str | None = Field(
-        ..., min_length=1, description="Отчество", examples=["Иванович"]
+        None, min_length=1, description="Отчество", examples=["Иванович"]
     )
     email: EmailStr | None = Field(
-        ..., description="Электронная почта", examples=["ivan@example.ru"]
+        None, description="Электронная почта", examples=["ivan@example.ru"]
     )
     address: str | None = Field(
-        ..., description="Адрес", examples=["ул. Пушкина, д.10"]
+        None, description="Адрес", examples=["ул. Пушкина, д.10"]
     )
     photo_url: str | None = Field(
-        None, examples=["http://127.0.0.1:8000/uploads/photo.jpg"]
+        None, examples=["http://127.0.0.1:8000/uploads/photo1.jpg"]
     )
 
 
 class UserRead(SQLModel):
-    id: int
-    first_name: str | None
-    second_name: str | None
-    patronymic: str | None
-    email: EmailStr
-    address: str | None
-    photo_url: str | None
+    """Схема для чтения данных пользователя."""
+
+    id: int = Field(..., description="ID", examples=[1])
+    first_name: str | None = Field(
+        None, min_length=1, description="Имя", examples=["Пётр"]
+    )
+    second_name: str | None = Field(
+        None, min_length=1, description="Фамилия", examples=["Петров"]
+    )
+    patronymic: str | None = Field(
+        None, min_length=1, description="Отчество", examples=["Петрович"]
+    )
+    email: EmailStr | None = Field(
+        None, description="Электронная почта", examples=["peter@example.ru"]
+    )
+    address: str | None = Field(
+        None, description="Адрес", examples=["ул. Лермонтова, д.20"]
+    )
+    photo_url: str | None = Field(
+        None, examples=["http://127.0.0.1:8000/uploads/photo2.jpg"]
+    )
+
+
+class UserUpdate(SQLModel):
+    """Схема для обновления данных пользователя (PUT)."""
+
+    first_name: str = Field(
+        ..., min_length=1, description="Имя", examples=["Василий"]
+    )
+    second_name: str = Field(
+        ..., min_length=1, description="Фамилия", examples=["Васильев"]
+    )
+    patronymic: str = Field(
+        ..., min_length=1, description="Отчество", examples=["Васильевич"]
+    )
+    email: EmailStr = Field(
+        ..., description="Электронная почта", examples=["vasiliy@example.ru"]
+    )
+    address: str = Field(
+        ..., description="Адрес", examples=["ул. Гоголя, д.30"]
+    )
+    photo_url: str = Field(
+        ..., examples=["http://127.0.0.1:8000/uploads/photo3.jpg"]
+    )
+
+
+class UserPartialUpdate(SQLModel):
+    """Схема для обновления данных пользователя (PATCH)."""
+
+    first_name: str | None = Field(
+        None, min_length=1, description="Имя", examples=["Дмитрий"]
+    )
+    second_name: str | None = Field(
+        None, min_length=1, description="Фамилия", examples=["Дмитриев"]
+    )
+    patronymic: str | None = Field(
+        None, min_length=1, description="Отчество", examples=["Дмитриевич"]
+    )
+    email: EmailStr | None = Field(
+        None, description="Электронная почта", examples=["dmitriy@example.ru"]
+    )
