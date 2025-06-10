@@ -75,7 +75,7 @@ class UserUpdate(SQLModel):
 
 
 class UserPartialUpdate(SQLModel):
-    """Схема для обновления данных пользователя (PATCH)."""
+    """Схема для частичного обновления данных пользователя (PATCH)."""
 
     first_name: str | None = Field(
         None, min_length=1, description="Имя", examples=["Дмитрий"]
