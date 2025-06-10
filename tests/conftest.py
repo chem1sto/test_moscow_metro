@@ -14,12 +14,14 @@ from app.main import app
 
 @pytest.fixture
 def client():
+    """Фикстура для тестового клиента."""
     with TestClient(app) as test_client:
         yield test_client
 
 
 @pytest.fixture
 async def session():
+    """Фикстура для тестового движка и инициализации сессии для тестовой БД."""
     test_engine = create_async_engine(
         settings.TEST_DATABASE_URL,
         echo=True
@@ -27,17 +29,16 @@ async def session():
     async with test_engine.begin() as conn:
         await conn.run_sync(SQLModel.metadata.create_all)
     async_session = async_sessionmaker(
-        test_engine, expire_on_commit=False, class_=AsyncSession
+        test_engine, expire_on_commit=False
     )
     async with async_session() as session:
         yield session
-    async with test_engine.begin() as conn:
-        await conn.run_sync(SQLModel.metadata.drop_all)
     await test_engine.dispose()
 
 
 @pytest.fixture(autouse=True)
 async def override_get_session(session: AsyncSession):
+    """Переопределение зависимостей для тестов."""
     app.dependency_overrides[get_async_session] = lambda: session
     yield
-    del app.dependency_overrides[get_async_session]
+    app.dependency_overrides.clear()
