@@ -9,8 +9,8 @@ from app.core.constants import UPLOAD_DIR
 from app.db.init_db import create_db_and_tables
 
 app = FastAPI(
-    title=settings.app_title,
-    description=settings.app_description
+    title=settings.APP_TITLE,
+    description=settings.APP_DESCRIPTION
 )
 app.include_router(main_router)
 UPLOAD_DIR.mkdir(exist_ok=True)

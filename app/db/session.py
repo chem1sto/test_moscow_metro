@@ -5,7 +5,7 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy import Column, Integer
 from sqlalchemy.ext.asyncio import (
-    create_async_engine, async_sessionmaker, AsyncSession
+    AsyncSession, async_sessionmaker, create_async_engine
 )
 from sqlalchemy.orm import declarative_base, declared_attr
 
@@ -22,7 +22,7 @@ class PreBase:
 
 Base = declarative_base(cls=PreBase)
 async_engine = create_async_engine(
-    settings.database_url, connect_args={"check_same_thread": False}
+    settings.DATABASE_URL, connect_args={"check_same_thread": False}
 )
 
 
