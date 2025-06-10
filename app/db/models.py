@@ -1,6 +1,6 @@
 """Модуль для создания и настройки моделей таблиц."""
 
-from typing import Optional
+from typing import List, Optional
 
 from sqlmodel import Field, Relationship, SQLModel
 
@@ -15,11 +15,14 @@ class User(SQLModel, table=True):
     email: Optional[str] = Field(nullable=True)
     address: Optional[str] = Field(nullable=True)
     photo_url: Optional[str] = Field(nullable=True)
-    posts: list["Post"] = Relationship(back_populates="user")
+    posts: List["Post"] = Relationship(
+        back_populates="user",
+        sa_relationship_kwargs={"cascade": "all, delete"}
+    )
 
 
 class Post(SQLModel, table=True):
-    """Модель поста."""
+    """Модель поста пользователя."""
 
     id: Optional[int] = Field(default=None, primary_key=True)
     title: Optional[str] = Field(nullable=True)

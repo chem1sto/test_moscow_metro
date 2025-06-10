@@ -94,8 +94,8 @@ async def update_user(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Пользователь для обновления не найден",
         )
-    user_data = user.model_dump()
-    user.sqlmodel_update(user_data)
+    update_user_data = user.model_dump()
+    user.sqlmodel_update(update_user_data)
     session.add(db_user)
     await session.commit()
     await session.refresh(db_user)
@@ -145,6 +145,7 @@ async def partial_update_user(
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete_user(user_id: int, session: SessionDep):
+    """Удаляет пользователя."""
     db_user = await session.get(User, user_id)
     if not db_user:
         raise HTTPException(
