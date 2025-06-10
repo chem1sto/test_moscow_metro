@@ -13,7 +13,7 @@ app = FastAPI(
     description=settings.APP_DESCRIPTION
 )
 app.include_router(main_router)
-UPLOAD_DIR.mkdir(exist_ok=True)
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 app.mount("/static", StaticFiles(directory=UPLOAD_DIR), name="static")
 
 

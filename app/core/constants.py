@@ -8,4 +8,4 @@ ALLOWED_IMAGE_TYPES = [
     "image/gif",
     "image/webp",
 ]
-UPLOAD_DIR = Path("app/uploads")
+UPLOAD_DIR = Path(__file__).parent.parent / "uploads"

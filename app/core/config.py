@@ -11,7 +11,7 @@ class Settings(BaseSettings):
         "метрополитена'"
     )
     DATABASE_URL: str = "sqlite+aiosqlite:///test_moscow_metro.db"
-    TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
+    TEST_DATABASE_URL: str = "sqlite+aiosqlite:///:memory:"
 
 
 settings = Settings()
