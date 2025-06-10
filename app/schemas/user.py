@@ -22,9 +22,6 @@ class UserCreate(SQLModel):
     address: str | None = Field(
         None, description="Адрес", examples=["ул. Пушкина, д.10"]
     )
-    photo_url: str | None = Field(
-        None, examples=["http://127.0.0.1:8000/uploads/photo1.jpg"]
-    )
 
 
 class UserRead(SQLModel):
@@ -47,7 +44,7 @@ class UserRead(SQLModel):
         None, description="Адрес", examples=["ул. Лермонтова, д.20"]
     )
     photo_url: str | None = Field(
-        None, examples=["http://127.0.0.1:8000/uploads/photo2.jpg"]
+        None, examples=["http://127.0.0.1:8000/static/photo_user_1.jpg"]
     )
 
 
@@ -68,9 +65,6 @@ class UserUpdate(SQLModel):
     )
     address: str = Field(
         ..., description="Адрес", examples=["ул. Гоголя, д.30"]
-    )
-    photo_url: str = Field(
-        ..., examples=["http://127.0.0.1:8000/uploads/photo3.jpg"]
     )
 
 
