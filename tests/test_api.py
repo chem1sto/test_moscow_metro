@@ -46,7 +46,7 @@ async def test_create_user_duplicate_email(client):
     """Тест дублирования email при создании пользователя."""
     user_data = {
         "first_name": "Петр",
-        "email": "petr@example.com"
+        "email": "peter@example.com"
     }
     response1 = client.post("/users/", json=user_data)
     assert response1.status_code == status.HTTP_201_CREATED
@@ -64,7 +64,21 @@ async def test_get_users_endpoint(client):
     assert response.status_code == status.HTTP_200_OK
 
 
-# @pytest.mark.asyncio
-# async def test_get_user_endpoint(client):
-#     response = client.get("/user/")
-#     assert response.status_code == status.HTTP_200_OK
+@pytest.mark.asyncio
+async def test_get_user_endpoint(client, session):
+    test_user = User(
+        first_name="Иван",
+        last_name="Иванов",
+        email="ivan@example.com"
+    )
+    session.add(test_user)
+    await session.commit()
+    await session.refresh(test_user)
+    response = client.get(f"/users/{test_user.id}/")
+    assert response.status_code == status.HTTP_200_OK
+    user_data = response.json()
+    assert user_data["id"] == test_user.id
+    assert user_data["first_name"] == test_user.first_name
+    assert user_data["email"] == test_user.email
+    response = client.get("/users/999999/")
+    assert response.status_code == status.HTTP_404_NOT_FOUND
