@@ -64,9 +64,9 @@ async def test_user(session: AsyncSession):
 
 
 @pytest.fixture
-async def test_user_post(session: AsyncSession):
+async def test_user_post(session: AsyncSession, test_user: User):
     post = Post(
-        user_id=1,
+        user_id=test_user.id,
         title="Название поста",
         content="Топовый контент",
     )
