@@ -33,6 +33,8 @@ async def session():
     )
     async with async_session() as session:
         yield session
+    async with test_engine.begin() as conn:
+        await conn.run_sync(SQLModel.metadata.drop_all)
     await test_engine.dispose()
 
 
