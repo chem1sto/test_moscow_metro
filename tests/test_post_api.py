@@ -79,7 +79,7 @@ async def test_create_post_invalid_user_ids(
     ("a", status.HTTP_422_UNPROCESSABLE_ENTITY)
 ])
 @pytest.mark.asyncio
-async def test_create_post_invalid_user_ids(
+async def test_create_post_invalid_user_ids_type(
         client: TestClient, user_id: str | None, expected_status: status
 ):
     """Тест валидации данных с неправильным типом user_id при создании поста
@@ -93,3 +93,70 @@ async def test_create_post_invalid_user_ids(
         }
     )
     assert response.status_code == expected_status
+
+
+@pytest.mark.asyncio
+async def test_update_post(
+        client: TestClient,
+        session: AsyncSession,
+        test_user_post: Post,
+):
+    """Тест обновления данных поста пользователя."""
+    updated_post_data = {
+        "user_id": 1,
+        "title": "Обновленный заголовок",
+        "content": "Обновленный контент",
+    }
+    response = client.put(
+        f"/posts/{test_user_post.id}/",
+        json=updated_post_data
+    )
+    assert response.status_code == status.HTTP_200_OK
+    user_post_data = response.json()
+    assert user_post_data["id"] == test_user_post.id
+    assert user_post_data["user_id"] == updated_post_data["user_id"]
+    assert user_post_data["title"] == updated_post_data["title"]
+    assert user_post_data["content"] == updated_post_data["content"]
+    await session.refresh(test_user_post)
+    assert test_user_post.user_id == updated_post_data["user_id"]
+    assert test_user_post.title == updated_post_data["title"]
+    assert test_user_post.content == updated_post_data["content"]
+
+
+@pytest.mark.asyncio
+async def test_partial_update_post(
+        client: TestClient,
+        session: AsyncSession,
+        test_user_post: Post,
+):
+    """Тест частичного обновления данных поста пользователя."""
+    updated_post_data = {
+        "user_id": 1,
+        "content": "Супер контент",
+    }
+    response = client.patch(
+        f"/posts/{test_user_post.id}/",
+        json=updated_post_data
+    )
+    assert response.status_code == status.HTTP_200_OK
+    user_post_data = response.json()
+    assert user_post_data["id"] == test_user_post.id
+    assert user_post_data["user_id"] == updated_post_data["user_id"]
+    assert user_post_data["content"] == updated_post_data["content"]
+    await session.refresh(test_user_post)
+    assert test_user_post.user_id == updated_post_data["user_id"]
+    assert test_user_post.content == updated_post_data["content"]
+
+
+@pytest.mark.asyncio
+async def test_delete_post(
+        client: TestClient, session: AsyncSession, test_user_post: Post
+):
+    """Тест удаления поста пользователя."""
+    response = client.delete(f"/posts/{test_user_post.id}/")
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+    assert not response.content
+    deleted_user_post = await session.get(Post, test_user_post.id)
+    assert deleted_user_post is None
+    response_for_nonexistent = client.delete(f"/posts/{test_user_post.id}/")
+    assert response_for_nonexistent.status_code == status.HTTP_404_NOT_FOUND
