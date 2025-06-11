@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import (
 from sqlmodel import SQLModel
 
 from app.core.config import settings
-from app.db.models import User
+from app.db.models import User, Post
 from app.db.session import get_async_session
 from app.main import app
 
@@ -61,3 +61,16 @@ async def test_user(session: AsyncSession):
     await session.commit()
     await session.refresh(user)
     return user
+
+
+@pytest.fixture
+async def test_user_post(session: AsyncSession):
+    post = Post(
+        user_id=1,
+        title="Название поста",
+        content="Топовый контент",
+    )
+    session.add(post)
+    await session.commit()
+    await session.refresh(post)
+    return post

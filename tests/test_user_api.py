@@ -1,4 +1,4 @@
-"""Модуль для тестирования API-эндпоинтов."""
+"""Модуль для тестирования API-эндпоинтов для User."""
 
 import pytest
 from fastapi import status
@@ -9,8 +9,31 @@ from app.db.models import User
 
 
 @pytest.mark.asyncio
-async def test_create_user_success(client: TestClient, session: AsyncSession):
-    """Тест успешного создания пользователя."""
+async def test_get_users(client):
+    """Тест получения данных всех пользователей."""
+    response = client.get("/users/")
+    assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.asyncio
+async def test_get_user(
+        client: TestClient, session: AsyncSession, test_user: User
+):
+    """Тест получения данных одного пользователя."""
+    response = client.get(f"/users/{test_user.id}/")
+    assert response.status_code == status.HTTP_200_OK
+    user_data = response.json()
+    assert user_data["id"] == test_user.id
+    assert user_data["first_name"] == test_user.first_name
+    assert user_data["second_name"] == test_user.second_name
+    assert user_data["email"] == test_user.email
+    response = client.get("/users/100/")
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+@pytest.mark.asyncio
+async def test_create_user(client: TestClient, session: AsyncSession):
+    """Тест создания пользователя."""
     user_data = {
         "first_name": "Иван",
         "second_name": "Иванов",
@@ -32,7 +55,7 @@ async def test_create_user_success(client: TestClient, session: AsyncSession):
 
 @pytest.mark.asyncio
 async def test_create_user_validation_error(client: TestClient):
-    """Тест валидации данных."""
+    """Тест валидации данных при создании пользователя."""
     invalid_data = {
         "email": "invalid-email"
     }
@@ -61,30 +84,10 @@ async def test_create_user_duplicate_email(client: TestClient):
 
 
 @pytest.mark.asyncio
-async def test_get_users_endpoint(client):
-    response = client.get("/users/")
-    assert response.status_code == status.HTTP_200_OK
-
-
-@pytest.mark.asyncio
-async def test_get_user_endpoint(
+async def test_update_user(
         client: TestClient, session: AsyncSession, test_user: User
 ):
-    response = client.get(f"/users/{test_user.id}/")
-    assert response.status_code == status.HTTP_200_OK
-    user_data = response.json()
-    assert user_data["id"] == test_user.id
-    assert user_data["first_name"] == test_user.first_name
-    assert user_data["second_name"] == test_user.second_name
-    assert user_data["email"] == test_user.email
-    response = client.get("/users/100/")
-    assert response.status_code == status.HTTP_404_NOT_FOUND
-
-
-@pytest.mark.asyncio
-async def test_update_user_endpoint(
-        client: TestClient, session: AsyncSession, test_user: User
-):
+    """Тест обновления данных пользователя."""
     updated_user_data = {
         "first_name": "Василий",
         "second_name": "Васильев",
@@ -116,9 +119,10 @@ async def test_update_user_endpoint(
 
 
 @pytest.mark.asyncio
-async def test_partial_update_user_endpoint(
+async def test_partial_update_user(
         client: TestClient, session: AsyncSession, test_user: User
 ):
+    """Тест частичного обновления данных пользователя."""
     updated_user_data = {
         "first_name": "Дмитрий",
         "second_name": "Дмитриев",
@@ -144,9 +148,10 @@ async def test_partial_update_user_endpoint(
 
 
 @pytest.mark.asyncio
-async def test_delete_user_endpoint(
+async def test_delete_user(
         client: TestClient, session: AsyncSession, test_user: User
 ):
+    """Тест удаления пользователя."""
     response = client.delete(f"/users/{test_user.id}/")
     assert response.status_code == status.HTTP_204_NO_CONTENT
     assert not response.content
