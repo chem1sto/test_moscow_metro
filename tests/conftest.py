@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import (
 from sqlmodel import SQLModel
 
 from app.core.config import settings
+from app.db.models import User
 from app.db.session import get_async_session
 from app.main import app
 
@@ -44,3 +45,19 @@ async def override_get_session(session: AsyncSession):
     app.dependency_overrides[get_async_session] = lambda: session
     yield
     app.dependency_overrides.clear()
+
+
+@pytest.fixture
+async def test_user(session: AsyncSession):
+    user = User(
+        first_name="Иван",
+        second_name="Иванов",
+        patronymic="Иванович",
+        email="ivan@example.ru",
+        address="ул. Пушкина, д.10",
+        photo_url="http://127.0.0.1:8000/static/photo_user_1.jpg"
+    )
+    session.add(user)
+    await session.commit()
+    await session.refresh(user)
+    return user
