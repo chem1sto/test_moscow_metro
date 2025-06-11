@@ -69,6 +69,9 @@ class UserUpdate(SQLModel):
     address: str = Field(
         ..., description="Адрес", examples=["ул. Гоголя, д.30"]
     )
+    photo_url: str | None = Field(
+        ..., examples=["http://127.0.0.1:8000/static/photo_user_3.jpg"]
+    )
 
 
 class UserPartialUpdate(SQLModel):

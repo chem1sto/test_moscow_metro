@@ -75,7 +75,8 @@ async def update_post(
             detail="Пост пользователя для обновления не найден",
         )
     post_data = post.model_dump()
-    post.sqlmodel_update(post_data)
+    for key, value in post_data.items():
+        setattr(db_post, key, value)
     session.add(db_post)
     await session.commit()
     await session.refresh(db_post)

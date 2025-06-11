@@ -96,6 +96,8 @@ async def update_user(
         )
     update_user_data = user.model_dump()
     user.sqlmodel_update(update_user_data)
+    for key, value in update_user_data.items():
+        setattr(db_user, key, value)
     session.add(db_user)
     await session.commit()
     await session.refresh(db_user)
